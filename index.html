@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Couleurs - Aléatoires</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-palette"></i> Générateur de Couleurs</h1>
+            <p>Créez des palettes de couleurs uniques et inspirez-vous</p>
+        </header>
+
+        <div class="color-generator">
+            <!-- Générateur principal -->
+            <div class="main-generator">
+                <div class="color-display">
+                    <div class="color-card primary" id="primaryColor">
+                        <div class="color-preview"></div>
+                        <div class="color-info">
+                            <div class="color-code" id="primaryCode">#FF6B6B</div>
+                            <div class="color-name" id="primaryName">Rouge corail</div>
+                        </div>
+                        <div class="color-actions">
+                            <button class="btn-icon" id="copyPrimary" title="Copier">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="btn-icon" id="lockPrimary" title="Verrouiller">
+                                <i class="fas fa-lock-open"></i>
+                            </button>
+                            <button class="btn-icon" id="favoritePrimary" title="Favoris">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="generator-controls">
+                    <div class="control-group">
+                        <h3><i class="fas fa-cog"></i> Paramètres</h3>
+                        <div class="control-item">
+                            <label for="colorCount">Nombre de couleurs</label>
+                            <div class="slider-container">
+                                <input type="range" id="colorCount" min="1" max="10" value="5">
+                                <span class="slider-value" id="colorCountValue">5</span>
+                            </div>
+                        </div>
+
+                        <div class="control-item">
+                            <label for="hueRange">Plage de teinte</label>
+                            <div class="range-inputs">
+                                <input type="number" id="hueMin" min="0" max="360" value="0" placeholder="Min">
+                                <span>-</span>
+                                <input type="number" id="hueMax" min="0" max="360" value="360" placeholder="Max">
+                            </div>
+                        </div>
+
+                        <div class="control-item">
+                            <label for="saturationRange">Saturation (%)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="satMin" min="0" max="100" value="30" placeholder="Min">
+                                <span>-</span>
+                                <input type="number" id="satMax" min="0" max="100" value="90" placeholder="Max">
+                            </div>
+                        </div>
+
+                        <div class="control-item">
+                            <label for="lightnessRange">Luminosité (%)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="lightMin" min="20" max="100" value="40" placeholder="Min">
+                                <span>-</span>
+                                <input type="number" id="lightMax" min="20" max="100" value="80" placeholder="Max">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3><i class="fas fa-magic"></i> Génération</h3>
+                        <button class="btn btn-primary full-width" id="generateBtn">
+                            <i class="fas fa-random"></i>
+                            Générer
+                        </button>
+
+                        <div class="generation-modes">
+                            <button class="mode-btn active" data-mode="random">
+                                <i class="fas fa-dice"></i>
+                                Aléatoire
+                            </button>
+                            <button class="mode-btn" data-mode="harmonious">
+                                <i class="fas fa-peace"></i>
+                                Harmonieux
+                            </button>
+                            <button class="mode-btn" data-mode="gradient">
+                                <i class="fas fa-fill-drip"></i>
+                                Dégradé
+                            </button>
+                            <button class="mode-btn" data-mode="analogous">
+                                <i class="fas fa-circle-notch"></i>
+                                Analogues
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3><i class="fas fa-save"></i> Actions</h3>
+                        <button class="btn btn-secondary full-width" id="savePalette">
+                            <i class="fas fa-save"></i>
+                            Sauvegarder palette
+                        </button>
+                        <button class="btn btn-outline full-width" id="exportPalette">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                        <button class="btn btn-danger full-width" id="resetAll">
+                            <i class="fas fa-undo"></i>
+                            Réinitialiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Palette générée -->
+            <div class="palette-section">
+                <h3><i class="fas fa-swatchbook"></i> Palette générée</h3>
+                <div class="palette-grid" id="paletteGrid">
+                    <!-- Les couleurs seront générées ici -->
+                </div>
+            </div>
+
+            <!-- Historique -->
+            <div class="history-section">
+                <h3><i class="fas fa-history"></i> Historique récent</h3>
+                <div class="history-list" id="historyList">
+                    <div class="empty-history">
+                        <i class="fas fa-clock"></i>
+                        <p>Aucune palette générée</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal d'export -->
+        <div id="exportModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Exporter la palette</h3>
+                    <span class="modal-close" id="exportClose">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="export-options">
+                        <button class="export-btn" data-format="css">
+                            <i class="fab fa-css3"></i>
+                            CSS
+                        </button>
+                        <button class="export-btn" data-format="scss">
+                            <i class="fab fa-sass"></i>
+                            SCSS
+                        </button>
+                        <button class="export-btn" data-format="json">
+                            <i class="fas fa-code"></i>
+                            JSON
+                        </button>
+                        <button class="export-btn" data-format="png">
+                            <i class="fas fa-image"></i>
+                            Image PNG
+                        </button>
+                    </div>
+                    <div class="export-preview">
+                        <textarea id="exportCode" readonly></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="copyExport">Copier</button>
+                    <button class="btn btn-primary" id="downloadExport">Télécharger</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal des favoris -->
+        <div id="favoritesModal" class="modal">
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <h3>Couleurs favorites</h3>
+                    <span class="modal-close" id="favoritesClose">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="favorites-grid" id="favoritesGrid">
+                        <div class="empty-favorites">
+                            <i class="far fa-heart"></i>
+                            <p>Aucune couleur favorite</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outil pipette -->
+        <div class="color-picker-tool" id="colorPicker">
+            <div class="picker-header">
+                <span>Pipette</span>
+                <button class="btn-icon" id="closePicker">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="picked-colors" id="pickedColors">
+                <!-- Couleurs capturées -->
+            </div>
+            <div class="picker-actions">
+                <button class="btn btn-secondary" id="startPicking">
+                    <i class="fas fa-eye-dropper"></i>
+                    Capturer
+                </button>
+                <button class="btn btn-primary" id="addToPalette">
+                    Ajouter à la palette
+                </button>
+            </div>
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <div id="loadingIndicator" class="loading-indicator">
+            <div class="spinner"></div>
+            <p>Génération en cours...</p>
+        </div>
+
+        <!-- Notifications -->
+        <div id="notification" class="notification">
+            <div class="notification-content">
+                <i class="fas fa-info-circle"></i>
+                <span id="notificationText"></span>
+            </div>
+        </div>
+
+        <!-- Bouton flottant pour favoris -->
+        <button class="floating-btn" id="favoritesBtn" title="Voir les favoris">
+            <i class="fas fa-heart"></i>
+            <span class="favorite-count" id="favoriteCount">0</span>
+        </button>
+
+        <script src="script.js"></script>
+    </div>
+</body>
+</html>
